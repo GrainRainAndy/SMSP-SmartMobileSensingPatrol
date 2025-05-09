@@ -3,8 +3,10 @@
 import os
 
 from ultralytics import YOLO
+import threading
 
 from predict_live import predict_live
+from capture_to_cache import *
 
 def download_model(model_name, save_path='../models/'):
     """
@@ -20,12 +22,15 @@ def download_model(model_name, save_path='../models/'):
     return model
 
 if __name__ == "__main__":
-    predict_live(
-        model_path='../models/yolov11/yolo11x.pt',
-        cam_id=0,
-        save_video=False,
-        save_dir=None,
-        show_window=True,
-        conf=0.25,
-        fps=60
-    )
+    parser = argparse.ArgumentParser(description="实时摄像头 YOLO 推理")
+    parser.add_argument('--camera_ids', type=int, default=[0], help='摄像头 ID')
+    parser.add_argument('--model', type=str, default='../models/yolov10/yolov10x.pt', help='YOLO模型路径')
+    parser.add_argument('--save_video', action='store_true', default=False, help='是否保存视频')
+    parser.add_argument('--save_dir', type=str, default=None, help='视频保存目录')
+    parser.add_argument('--no_window', action='store_true', default=False, help='不显示窗口')
+    parser.add_argument('--conf', type=float, default=0.25, help='YOLO置信度阈值')
+    parser.add_argument('--fps', type=int, default=20, help='保存视频帧率')
+    args = parser.parse_args()
+
+
+
