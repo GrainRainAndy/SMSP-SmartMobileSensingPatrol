@@ -1,0 +1,7 @@
+path: D:/Github/SMSP-SmartMobileSensingPatrol/datasets/cmp_dataset
+train: images/train
+val: images/val
+test: images/test
+
+nc: 5
+names: ['white', 'small', 'pillow', 'wipe', 'longbox']

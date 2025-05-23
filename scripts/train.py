@@ -19,12 +19,12 @@ def train(model, data, epochs, device, save_dir, proj_name, imgsz = 600):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='../models/yolov10/yolov10s.pt')
-    parser.add_argument('--data', type=str, default='../configs/coco8.yaml')
+    parser.add_argument('--data', type=str, default='../configs/data.yaml')
     parser.add_argument('--epochs', type=int, default=50)
     parser.add_argument('--device', type=str, default='cpu')
     parser.add_argument('--save_dir', type=str, default='../runs/detect/train')
     parser.add_argument('--imgsz', type=int, default=640)
-    parser.add_argument('--proj_name', type=str, default='yolo10s_coco8_test')
+    parser.add_argument('--proj_name', type=str, default='yolo10s_cmp')
     args = parser.parse_args()
 
     train(model=args.model,

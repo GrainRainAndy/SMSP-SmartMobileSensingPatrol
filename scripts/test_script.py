@@ -1,12 +1,9 @@
 # 用于测试其余脚本内容作为函数调用的正确性
 # 运行模型下载脚本
-import os
 
 from ultralytics import YOLO
-import threading
 
-from predict_live import predict_live
-from capture_to_cache import *
+from camera.capture_to_cache import *
 
 def download_model(model_name, save_path='../models/'):
     """
