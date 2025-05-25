@@ -17,21 +17,41 @@ def main():
     camera_indices = detect_cameras()
     camera_indices.pop(0)
 
-    print("检测到摄像头:", camera_indices)
-    if not camera_indices:
-        print("未检测到摄像头")
-        return
+    # print("检测到摄像头:", camera_indices)
+    # if not camera_indices:
+    #     print("未检测到摄像头")
+    #     return
 
     # 采集一帧
+    # cam_frames = {}
+    # for cam_id in camera_indices:
+    #     cap = cv2.VideoCapture(cam_id)
+    #     ret, frame = cap.read()
+    #     cap.release()
+    #     if ret:
+    #         cam_frames[cam_id] = frame
+    #     else:
+    #         print(f"摄像头 {cam_id} 采集帧失败")
+
+    # 示例：每个摄像头 ID 对应一张图片路径
+    image_paths = {
+        0: r'E:\images\cam0.jpg',
+        1: r'E:\images\cam1.jpg',
+        2: r'E:\images\cam2.jpg',
+        3: r'E:\images\cam3.jpg'
+    }
+
     cam_frames = {}
-    for cam_id in camera_indices:
-        cap = cv2.VideoCapture(cam_id)
-        ret, frame = cap.read()
-        cap.release()
-        if ret:
+    for cam_id, path in image_paths.items():
+        frame = cv2.imread(path)
+        if frame is not None:
             cam_frames[cam_id] = frame
         else:
-            print(f"摄像头 {cam_id} 采集帧失败")
+            print(f"摄像头 {cam_id} 图像读取失败，路径：{path}")
+
+
+
+
 
     # 标定并得到单应矩阵
     try:
