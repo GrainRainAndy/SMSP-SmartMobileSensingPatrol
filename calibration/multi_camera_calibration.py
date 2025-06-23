@@ -6,18 +6,16 @@ import numpy as np
 import json
 import os
 
+
 class MultiCameraCalibration:
     def __init__(self, cam_frames):
-        """
-        cam_frames: dict {cam_id: image(np.ndarray)}
-        """
         self.cam_frames = cam_frames
         self.cam_ids = list(cam_frames.keys())
         self.index = 0
 
         self.src_points = []
         self.dst_points = []
-        self.Hs = {}  # {cam_id: H矩阵}
+        self.Hs = {}
 
         self.clicked_points = []
 
@@ -29,20 +27,42 @@ class MultiCameraCalibration:
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.on_click)
 
-        # 控件框架
+        # 控件区域
         control_frame = tk.Frame(self.root)
-        control_frame.pack(fill=tk.X)
+        control_frame.pack(fill=tk.X, padx=5, pady=5)
 
-        self.label_info = tk.Label(control_frame, text="")
-        self.label_info.pack(side=tk.LEFT, padx=5)
+        # 摄像头编号输入
+        tk.Label(control_frame, text="摄像头编号:").pack(side=tk.LEFT)
+        self.cam_id_entry = tk.Entry(control_frame, width=5)
+        self.cam_id_entry.pack(side=tk.LEFT)
+        self.cam_id_entry.insert(0, str(self.cam_ids[self.index]))
 
+        # 删除按钮
+        self.btn_delete = tk.Button(control_frame, text="重新标定", command=self.delete_last_point)
+        self.btn_delete.pack(side=tk.LEFT, padx=5)
+
+        # 下一摄像头按钮
         self.btn_next = tk.Button(control_frame, text="下一摄像头", command=self.next_camera)
         self.btn_next.pack(side=tk.RIGHT, padx=5)
 
-        self.dst_entry = tk.Entry(control_frame, width=40)
-        # 默认目标坐标为单位正方形四点
-        self.dst_entry.insert(0, "0 0 100 0 100 100 0 100")
-        self.dst_entry.pack(side=tk.RIGHT, padx=5)
+        # 状态标签
+        self.label_info = tk.Label(control_frame, text="")
+        self.label_info.pack(side=tk.LEFT, padx=5)
+
+        # 目标坐标输入框们
+        self.dst_entries = []
+        self.coord_frame = tk.Frame(self.root)
+        self.coord_frame.pack(fill=tk.X, padx=5, pady=5)
+        for i in range(4):
+            label = tk.Label(self.coord_frame, text=f"点 {i+1} 坐标:")
+            label.grid(row=i, column=0)
+            entry_x = tk.Entry(self.coord_frame, width=6)
+            entry_y = tk.Entry(self.coord_frame, width=6)
+            entry_x.grid(row=i, column=1)
+            entry_y.grid(row=i, column=2)
+            entry_x.insert(0, str((i % 2) * 100))
+            entry_y.insert(0, str((i // 2) * 100))
+            self.dst_entries.append((entry_x, entry_y))
 
         self.img_tk = None
         self.show_image()
@@ -64,11 +84,23 @@ class MultiCameraCalibration:
 
     def on_click(self, event):
         if len(self.clicked_points) >= 4:
-            messagebox.showinfo("提示", "已选择4个点，点击‘下一摄像头’或修改目标坐标后保存")
+            messagebox.showinfo("提示", "已选择4个点，点击‘下一摄像头’或删除后重新选择")
             return
         x, y = event.x, event.y
         self.clicked_points.append([x, y])
         self.canvas.create_oval(x-4, y-4, x+4, y+4, fill="red")
+        self.canvas.create_text(x+10, y, text=str(len(self.clicked_points)), fill="red")
+        self.update_label()
+
+    def delete_last_point(self):
+        if not self.clicked_points:
+            return
+        self.clicked_points.pop()
+        self.show_image()
+        for i, pt in enumerate(self.clicked_points):
+            x, y = pt
+            self.canvas.create_oval(x-4, y-4, x+4, y+4, fill="red")
+            self.canvas.create_text(x+10, y, text=str(i+1), fill="red")
         self.update_label()
 
     def update_label(self):
@@ -81,12 +113,13 @@ class MultiCameraCalibration:
             return False
 
         try:
-            dst_vals = list(map(float, self.dst_entry.get().strip().split()))
-            if len(dst_vals) != 8:
-                raise ValueError()
-            dst_pts = [dst_vals[i:i+2] for i in range(0,8,2)]
+            dst_pts = []
+            for x_entry, y_entry in self.dst_entries:
+                x = float(x_entry.get())
+                y = float(y_entry.get())
+                dst_pts.append([x, y])
         except:
-            messagebox.showerror("错误", "目标坐标输入格式错误，应为8个数字")
+            messagebox.showerror("错误", "目标坐标输入格式错误")
             return False
 
         src_pts = np.array(self.clicked_points, dtype=np.float32)
@@ -97,10 +130,14 @@ class MultiCameraCalibration:
             messagebox.showerror("错误", "计算单应矩阵失败")
             return False
 
-        cam_id = self.cam_ids[self.index]
+        try:
+            cam_id = int(self.cam_id_entry.get())
+        except:
+            messagebox.showerror("错误", "摄像头编号输入不合法")
+            return False
+
         self.Hs[cam_id] = H
 
-        # 保存到json文件
         file_path = "camera_homography.json"
         data = {}
         if os.path.exists(file_path):
@@ -123,14 +160,14 @@ class MultiCameraCalibration:
         return True
 
     def next_camera(self):
-        # 尝试保存当前标定
         if not self.save_current_calibration():
             return
-        # 切换到下一个摄像头
         self.index += 1
         if self.index >= len(self.cam_ids):
-            self.root.quit()  # 所有摄像头标定完成，退出 GUI
+            self.root.quit()
         else:
+            self.cam_id_entry.delete(0, tk.END)
+            self.cam_id_entry.insert(0, str(self.cam_ids[self.index]))
             self.show_image()
 
     def run(self):

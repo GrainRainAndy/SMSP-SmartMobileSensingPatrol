@@ -101,15 +101,15 @@ class PointMerger:
 # ✅ 示例用法
 if __name__ == "__main__":
     projector = HomographyProjector()
-    projector.run(conf_thresh=0.5)
+    projector.run(conf_thresh=0.4)
     final_array = projector.final_array
 
     distance_dict = {
-        0: 12,
-        1: 8,
+        0: 10,
+        1: 10,
         2: 20,
         3: 10,
-        4: 50
+        4: 20
     }
 
     merger = PointMerger(distance_dict=distance_dict, default_thresh=10)

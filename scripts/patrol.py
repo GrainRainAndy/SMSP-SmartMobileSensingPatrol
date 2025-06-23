@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('TkAgg')      # 👈 指定可交互后端
+matplotlib.use('TkAgg')      # 指定可交互后端
 matplotlib.rcParams['font.family'] = 'SimHei'
 matplotlib.rcParams['axes.unicode_minus'] = False
 
@@ -22,7 +22,7 @@ def solve_tsp_fixed_end(points, start_index, end_index):
             if i != j:
                 dist_matrix[i, j] = distance(points[i], points[j])
 
-    # ✨ 关键行：起终点要用列表包裹
+    # 关键行：起终点要用列表包裹
     manager = pywrapcp.RoutingIndexManager(n, 1, [start_index], [end_index])
     routing = pywrapcp.RoutingModel(manager)
 
@@ -175,4 +175,4 @@ if __name__ == "__main__":
     points_array = np.load("merged_points.npy") # 你的点
     s, e = interactive_select_start_end(points_array)
     route = solve_tsp_fixed_end(points_array[:, 1:3], s, e)
-    plot_and_save_route(points_array, route, "my_path.txt")
+    plot_and_save_route(points_array, route, "final_path.txt")

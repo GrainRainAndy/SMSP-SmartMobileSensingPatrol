@@ -1,11 +1,14 @@
 import argparse
-
+import cv2
 from ultralytics import YOLO
 
 
 def predict(model, source, save_dir, imgsz = 640):
+    img = cv2.imread(source)
     model = YOLO(model)
-    model.predict(source=source, save=True, imgsz=imgsz, conf=0.4, project=save_dir)
+    model.predict(source=source, save=True, imgsz=imgsz, conf=0.3, project=save_dir)
+    results = model(img)[0]
+
 
 # -----------------------
 # CLI 入口函数
@@ -19,7 +22,7 @@ def main():
     args = parser.parse_args()
 
     predict(model=args.model,
-            source=args.source,
+            source='D:\\Github\\SMSP-SmartMobileSensingPatrol\\Cache\\cam0.jpg',
             save_dir=args.save_dir,
             imgsz=640)
 

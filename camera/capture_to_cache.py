@@ -87,7 +87,7 @@ def capture_from_cameras_threaded(
 # -------------------------------
 def main():
     parser = argparse.ArgumentParser(description="多线程多摄像头采集工具")
-    parser.add_argument('--camera_ids', type=int, nargs='+', default=[1, 2])
+    parser.add_argument('--camera_ids', type=int, nargs='+', default=[1])
     parser.add_argument('--max_frames', type=int, default=1)
     parser.add_argument('--interval', type=int, default=1)
     parser.add_argument('--save_dir', type=str, default=None)

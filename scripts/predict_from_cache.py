@@ -72,13 +72,13 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description="从缓存图像序列中运行YOLO预测")
-    parser.add_argument('--model', type=str, default='../models/yolov10/yolov10s.pt', help='YOLO模型路径')
-    parser.add_argument('--cache_dir', type=str, default='../Cache', help='缓存图像目录')
+    parser.add_argument('--model', type=str, default='../models/yolov11/cmp_best.pt', help='YOLO模型路径')
+    parser.add_argument('--cache_dir', type=str, default='../Cache/camera_1', help='缓存图像目录')
     parser.add_argument('--save_dir', type=str, default='../runs/detect/video_proc', help='推理结果保存目录')
     parser.add_argument('--save_video', action='store_true', default=True, help='是否保存推理结果为视频')
     parser.add_argument('--no_window', action='store_true', default=False, help='是否不显示窗口')
     parser.add_argument('--conf', type=float, default=0.25, help='YOLO置信度阈值')
-    parser.add_argument('--fps', type=int, default=20, help='视频保存帧率')
+    parser.add_argument('--fps', type=int, default=1, help='视频保存帧率')
 
     args = parser.parse_args()
 

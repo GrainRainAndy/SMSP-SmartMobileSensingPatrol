@@ -25,11 +25,11 @@ class HomographyProjector:
         self.model = YOLO(model_path)
 
         # 图像路径
-        self.image_paths = [os.path.join(self.project_root, "datasets", "images", f"cam{i}.jpg") for i in range(4)]
-
+        self.image_paths = [os.path.join(self.project_root, "Cache", "cam0.jpg")]
+        # print(self.image_paths)
         self.final_array = None
 
-    def run(self, conf_thresh=0.0):
+    def run(self, conf_thresh=0.4):
         all_results = []
 
         for idx, path in enumerate(self.image_paths):
@@ -56,7 +56,9 @@ class HomographyProjector:
 
                 all_results.append([cls, proj[0], proj[1], conf])
 
+        all_results.append([-1, 0, 0, 1.0]) # 添加一个原点
         self.final_array = np.array(all_results)
+
 
     def show(self, conf_thresh=0.0):
         if self.final_array is None:
@@ -75,6 +77,6 @@ class HomographyProjector:
 
 if __name__ == "__main__":
     projector = HomographyProjector()
-    projector.run(conf_thresh=0.5)  # 👈 只处理置信度大于 0.5 的目标
+    projector.run(conf_thresh=0.4)  # 只处理置信度大于 0.5 的目标
     print(projector.final_array)
-    projector.show(conf_thresh=0.5)
+    projector.show(conf_thresh=0.4)

@@ -103,7 +103,7 @@ def predict_live_threads(model_path, cam_ids, save_video=False, save_dir=None,
 def main():
     parser = argparse.ArgumentParser(description="实时摄像头 YOLO 推理")
     parser.add_argument('--model', type=str, default='../models/yolov11/cmp_best.pt', help='YOLO 模型路径')
-    parser.add_argument('--cam_ids', type=int, default=[1,2], help='摄像头编号')
+    parser.add_argument('--cam_ids', type=int, default=[1], help='摄像头编号')
     parser.add_argument('--save_video', action='store_true', default=False, help='是否保存视频')
     parser.add_argument('--save_dir', type=str, default=None, help='视频保存目录')
     parser.add_argument('--no_window', action='store_true', default=False, help='不显示窗口')
