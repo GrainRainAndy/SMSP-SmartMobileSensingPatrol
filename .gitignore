@@ -50,3 +50,5 @@ __pycache__/
 runs/
 autosave/
 Cache/
+models/yolov10/yolov10x.pt
+models/yolov11/yolo11x.pt
